@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-public class AuthorRepositoryTest {
+class AuthorRepositoryTest {
 
     @Autowired
     protected AuthorRepository authorRepository;
@@ -20,7 +20,7 @@ public class AuthorRepositoryTest {
     }
 
     @Test
-    public void givenRepositoryRequest_DontSwitchVersion() {
+    void givenRepositoryRequest_DontSwitchVersion() {
         //given
         var denisVer0 = authorRepository.save(new Author().setFirstName("Denis").setLastName("Emelyanov"));
         assertThat(denisVer0.getVersion()).isZero();

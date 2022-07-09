@@ -1,0 +1,1 @@
+mvn verify sonar:sonar -Dsonar.login="admin" -Dsonar.password="DyEWn4V*RVV*"

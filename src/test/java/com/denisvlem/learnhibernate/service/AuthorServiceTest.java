@@ -10,11 +10,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
-public class AuthorServiceTest extends BasicMsTest {
+class AuthorServiceTest extends BasicMsTest {
 
 
     @Test
-    public void testOptimisticLock_SwitchVersion() {
+    void testOptimisticLock_SwitchVersion() {
         //given
         var denisVer0 = authorService.create("Denis", "Emelyanov");
         assertThat(denisVer0.getVersion()).isZero();
@@ -27,7 +27,7 @@ public class AuthorServiceTest extends BasicMsTest {
     }
 
     @Test
-    public void givenRepositoryRequest_whenNothingChanged_DontSwitchVersion() {
+    void givenRepositoryRequest_whenNothingChanged_DontSwitchVersion() {
         //given
         var denisVer0 = authorRepository.save(new Author().setFirstName("Denis").setLastName("Emelyanov"));
         assertThat(denisVer0.getVersion()).isZero();
@@ -40,7 +40,7 @@ public class AuthorServiceTest extends BasicMsTest {
     }
 
     @Test
-    public void givenRepeatableRequest_whenDone_shouldThrowOptimisticLockException() {
+    void givenRepeatableRequest_whenDone_shouldThrowOptimisticLockException() {
         //given
         var denisVer0 = authorService.create("Denis", "Emelyanov");
         assertThat(denisVer0.getVersion()).isZero();
