@@ -16,39 +16,46 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
 
+/**
+ * Basic microservice (integration) test suite.
+ * Includes rest assured rest api client configuration and transaction template
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 public abstract class BasicMsTest {
 
-    @LocalServerPort
-    protected int port;
+  @LocalServerPort
+  protected int port;
 
-    @Autowired
-    protected AuthorServiceJpaImpl authorService;
+  @Autowired
+  protected AuthorServiceJpaImpl authorService;
 
-    @Autowired
-    protected AuthorRepository authorRepository;
+  @Autowired
+  protected AuthorRepository authorRepository;
 
-    @Autowired
-    protected BookRepository bookRepository;
+  @Autowired
+  protected BookRepository bookRepository;
 
-    @Autowired
-    protected TransactionTemplate tx;
+  @Autowired
+  protected TransactionTemplate tx;
 
-    @BeforeEach
-    public void setUp() {
-        RestAssured.port = port;
-        RestAssured.requestSpecification = new RequestSpecBuilder()
-                .setPort(port)
-                .setContentType(ContentType.JSON)
-                .setAccept(ContentType.JSON)
-                .build();
-    }
+  /**
+   * Set up the test rest api client.
+   */
+  @BeforeEach
+  public void setUp() {
+    RestAssured.port = port;
+    RestAssured.requestSpecification = new RequestSpecBuilder()
+        .setPort(port)
+        .setContentType(ContentType.JSON)
+        .setAccept(ContentType.JSON)
+        .build();
+  }
 
-    @AfterEach
-    public void cleanUp() {
-        tx.executeWithoutResult(s -> bookRepository.deleteAll());
-        tx.executeWithoutResult(s -> authorRepository.deleteAll());
-    }
+  @AfterEach
+  public void cleanUp() {
+    tx.executeWithoutResult(s -> bookRepository.deleteAll());
+    tx.executeWithoutResult(s -> authorRepository.deleteAll());
+  }
 }

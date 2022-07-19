@@ -9,16 +9,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Book rest controller.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/book")
 @Slf4j
 public class BookController {
 
-    private final BookService service;
+  private final BookService service;
 
-    @PostMapping()
-    public void doPostAddBook(@RequestBody AddBookRequestDto requestDto) {
-        service.addBook(requestDto);
-    }
+  @PostMapping
+  public void doPostAddBook(@RequestBody AddBookRequestDto requestDto) {
+    service.addBook(requestDto);
+  }
 }

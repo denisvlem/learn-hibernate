@@ -1,45 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-		https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+  https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet  id="1"  author="Denis_Emelianov">
-        <createTable  tableName="book">
-            <column  name="book_id"  type="bigint"  autoIncrement="true">
-                <constraints  primaryKey="true"  nullable="false"/>
-            </column>
-            <column  name="title"  type="varchar(256)">
-                <constraints nullable="false"/>
-            </column>
-            <column  name="author_id"  type="bigint">
-                <constraints  nullable="false"/>
-            </column>
-            <column  name="genre"  type="int"/>
-        </createTable>
+  <changeSet id="1" author="Denis_Emelianov">
+    <createTable tableName="book">
+      <column name="book_id" type="bigint" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="title" type="varchar(256)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="author_id" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="genre" type="int"/>
+    </createTable>
 
-        <createTable tableName="author">
-            <column name="author_id" type="bigint" autoIncrement="true">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="first_name" type="varchar(512)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_name" type="varchar(512)">
-                <constraints nullable="true"/>
-            </column>
-        </createTable>
+    <createTable tableName="author">
+      <column name="author_id" type="bigint" autoIncrement="true">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="first_name" type="varchar(512)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_name" type="varchar(512)">
+        <constraints nullable="true"/>
+      </column>
+    </createTable>
 
-        <addForeignKeyConstraint baseTableName="book" baseColumnNames="author_id" constraintName="book_author_id_fk"
-                                 referencedTableName="author"
-                                 referencedColumnNames="author_id"/>
-    </changeSet>
+    <addForeignKeyConstraint baseTableName="book" baseColumnNames="author_id"
+      constraintName="book_author_id_fk"
+      referencedTableName="author"
+      referencedColumnNames="author_id"/>
+  </changeSet>
 
-    <changeSet id="2" author="Denis_Emelyanov">
-        <addColumn tableName="author">
-            <column name="version" type="integer"/>
-        </addColumn>
-    </changeSet>
+  <changeSet id="2" author="Denis_Emelyanov">
+    <addColumn tableName="author">
+      <column name="version" type="integer"/>
+    </addColumn>
+  </changeSet>
 
 </databaseChangeLog>
