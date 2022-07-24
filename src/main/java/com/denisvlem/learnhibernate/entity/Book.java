@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
@@ -36,6 +37,7 @@ public class Book {
   @ManyToOne
   @JoinColumn(name = "author_id")
   @EqualsAndHashCode.Exclude
+  @ToString.Exclude
   private Author author;
 
   @Column(name = "genre")

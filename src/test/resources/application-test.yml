@@ -6,7 +6,7 @@ spring:
     url: jdbc:h2:mem:books
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
         format_sql: true

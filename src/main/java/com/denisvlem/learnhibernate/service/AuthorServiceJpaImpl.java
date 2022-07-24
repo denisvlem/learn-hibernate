@@ -17,9 +17,15 @@ public class AuthorServiceJpaImpl implements AuthorService {
 
   private final AuthorRepository authorRepository;
 
+  @Transactional
+  public Author createNew(Author author) {
+    return authorRepository.save(author);
+  }
+
   @Override
   @Transactional(readOnly = true)
   public Author getById(long id) {
+
     log.debug("Author service getById() start");
     return authorRepository.getById(id);
   }
@@ -27,14 +33,15 @@ public class AuthorServiceJpaImpl implements AuthorService {
   @Override
   @Transactional
   public Author create(String firstName, String lastName) {
-    log.debug("Author service create() start");
 
+    log.debug("Author service create() start");
     return authorRepository.save(new Author().setFirstName(firstName).setLastName(lastName));
   }
 
   @Override
   @Transactional
   public Author update(Author author) {
+
     log.debug("Author service update() start");
     return authorRepository.save(author);
   }
@@ -42,8 +49,9 @@ public class AuthorServiceJpaImpl implements AuthorService {
   @Override
   @Transactional
   public void delete(Long authorId) {
+
     log.debug("Author with id = [{}] is being deleted", authorId);
     authorRepository.deleteById(authorId);
-    log.debug("Author with id = [{}] is deleted", authorId);
+    log.debug("Author with id = [{}] has been deleted", authorId);
   }
 }

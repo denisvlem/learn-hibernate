@@ -38,7 +38,7 @@ public class Author {
   @Column(name = "last_name")
   private String lastName;
 
-  @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "author", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<Book> books;
 
   @Version
