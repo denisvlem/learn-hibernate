@@ -41,12 +41,7 @@ class BookServiceTest {
   void givenAuthor_whenCreateBook_ShouldAddOneToDb() {
 
     //given
-    var givenAuthor = tx.execute(s -> authorRepository.save(
-            new Author()
-                .setFirstName("Stephen")
-                .setLastName("King")
-        )
-    );
+    var givenAuthor = createAuthor();
     assertThat(givenAuthor).isNotNull();
 
     var givenRequestBody = new AddBookRequestDto()
@@ -75,12 +70,7 @@ class BookServiceTest {
   @Test
   void givenBookPersisted_whenDeleteRequested_shouldDelete() {
     //given
-    var givenAuthor = tx.execute(s -> authorRepository.save(
-            new Author()
-                .setFirstName("Stephen")
-                .setLastName("King")
-        )
-    );
+    var givenAuthor = createAuthor();
     assertThat(givenAuthor).isNotNull();
     assertThat(authorRepository.findAll()).asList().isNotEmpty();
 
@@ -98,5 +88,14 @@ class BookServiceTest {
 
     //then
     assertThat(bookRepository.findAll()).asList().isEmpty();
+  }
+
+  private Author createAuthor() {
+    return tx.execute(s -> authorRepository.save(
+            new Author()
+                .setFirstName("Stephen")
+                .setLastName("King")
+        )
+    );
   }
 }

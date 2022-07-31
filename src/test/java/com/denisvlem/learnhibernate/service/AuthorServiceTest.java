@@ -8,6 +8,7 @@ import com.denisvlem.learnhibernate.entity.Author;
 import com.denisvlem.learnhibernate.entity.Book;
 import java.util.List;
 import java.util.Set;
+import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -82,15 +83,11 @@ class AuthorServiceTest extends BasicMsTest {
   @Test
   void givenOneAuthorWithBooksPersisted_whenDeleteRequested_shouldDeleteBooksAlsoFromDb() {
     //given
-    var persistedAuthorId = tx.execute(s ->
-        authorRepository.save(
-            new Author().setFirstName("Denis").setLastName("Emelyanov")).getAuthorId()
-    );
-    assertThat(persistedAuthorId).isNotNull();
+    var persistedAuthorId = saveAuthor();
 
     assertThat(bookRepository.findAll()).asList().isEmpty();
 
-    var persistedAuthor = authorRepository.getById(persistedAuthorId);
+    var persistedAuthor = authorRepository.getReferenceById(persistedAuthorId);
     bookRepository.saveAll(
         List.of(
             new Book().setGenre(1).setAuthor(persistedAuthor).setTitle("testBook1"),
@@ -132,15 +129,11 @@ class AuthorServiceTest extends BasicMsTest {
   void givenOneAuthorWithBooks_whenAuthorUpdatedWithAnotherSetOfBooks_shouldAddBooks() {
 
     //given
-    var persistedAuthorId = tx.execute(s ->
-        authorRepository.save(
-            new Author().setFirstName("Denis").setLastName("Emelyanov")).getAuthorId()
-    );
-    assertThat(persistedAuthorId).isNotNull();
+    var persistedAuthorId = saveAuthor();
 
     assertThat(bookRepository.findAll()).asList().isEmpty();
 
-    var persistedAuthor = authorRepository.getById(persistedAuthorId);
+    var persistedAuthor = authorRepository.getReferenceById(persistedAuthorId);
     bookRepository.saveAll(
         List.of(
             new Book().setGenre(1).setAuthor(persistedAuthor).setTitle("testBook1"),
@@ -150,7 +143,7 @@ class AuthorServiceTest extends BasicMsTest {
     assertThat(bookRepository.findAll()).asList().hasSize(2);
 
     var authorWithBooks = tx.execute(s -> {
-      var author = authorRepository.getById(persistedAuthorId);
+      var author = authorRepository.getReferenceById(persistedAuthorId);
       assertThat(author.getBooks()).hasSize(2);
       return author;
     });
@@ -165,5 +158,31 @@ class AuthorServiceTest extends BasicMsTest {
     //then
     assertThat(authorRepository.findAll()).asList().hasSize(1);
     assertThat(bookRepository.findAll()).asList().hasSize(3);
+  }
+
+  @Test
+  void givenCorruptedAuthor_whenUpdate_shouldThrowValidationException() {
+
+    final var author = new Author();
+    author.setFirstName("");
+
+    assertThatThrownBy(() -> authorService.update(author))
+        .isInstanceOf(ConstraintViolationException.class);
+  }
+
+  @Test
+  void givenNullAuthorId_whenDeleteById_shouldThrowValidationException() {
+
+    assertThatThrownBy(() -> authorService.delete(null))
+        .isInstanceOf(ConstraintViolationException.class);
+  }
+
+  private Long saveAuthor() {
+    var persistedAuthorId = tx.execute(s ->
+        authorRepository.save(
+            new Author().setFirstName("Denis").setLastName("Emelyanov")).getAuthorId()
+    );
+    assertThat(persistedAuthorId).isNotNull();
+    return persistedAuthorId;
   }
 }

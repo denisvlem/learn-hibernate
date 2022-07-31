@@ -27,7 +27,7 @@ public class AuthorServiceJpaImpl implements AuthorService {
   public Author getById(long id) {
 
     log.debug("Author service getById() start");
-    return authorRepository.getById(id);
+    return authorRepository.getReferenceById(id);
   }
 
   @Override
@@ -49,7 +49,6 @@ public class AuthorServiceJpaImpl implements AuthorService {
   @Override
   @Transactional
   public void delete(Long authorId) {
-
     log.debug("Author with id = [{}] is being deleted", authorId);
     authorRepository.deleteById(authorId);
     log.debug("Author with id = [{}] has been deleted", authorId);
