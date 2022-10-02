@@ -14,10 +14,11 @@ class BookControllerTest extends BasicMsTest {
   void givenNoBooks_whenRequestCreate_shouldAddOne() {
 
     //given
-    assertThat(bookRepository.findAll()).asList().isEmpty();
     var authorId = tx.execute(s -> authorRepository
         .save(new Author().setFirstName("Denis").setLastName("Emelyanov"))
         .getAuthorId());
+
+    assertThat(bookRepository.findAll()).asList().isEmpty();
 
     //when
     RestAssured.given()

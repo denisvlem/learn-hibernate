@@ -6,18 +6,23 @@ import com.denisvlem.learnhibernate.repository.BookRepository;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Book service for business rules.
  */
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookService {
 
   private final BookRepository bookRepository;
   private final AuthorService authorService;
+
+  private final MockService mockService;
 
   /**
    * Add book to the db.
@@ -27,6 +32,7 @@ public class BookService {
    */
   @Transactional
   public Book addBook(AddBookRequestDto requestDto) {
+    log.info("Start BookService#addBook");
     var author = authorService.getById(requestDto.getAuthorId());
 
     var book = new Book()
@@ -34,7 +40,12 @@ public class BookService {
         .setGenre(requestDto.getGenre())
         .setAuthor(author);
 
-    return bookRepository.save(book);
+    var savedBook = bookRepository.save(book);
+
+    //In normal cases does nothing, placed here for imitation something in tests
+    mockService.doSomething();
+    log.info("End BookService#addBook");
+    return savedBook;
   }
 
   @Transactional

@@ -53,4 +53,5 @@ public class AuthorServiceJpaImpl implements AuthorService {
     authorRepository.deleteById(authorId);
     log.debug("Author with id = [{}] has been deleted", authorId);
   }
+
 }

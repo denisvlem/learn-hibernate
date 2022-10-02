@@ -12,9 +12,14 @@ import org.springframework.context.annotation.Bean;
 public class ServiceTestConfiguration {
 
   @Bean
+  public MockService mockService() {
+    return new MockService();
+  }
+
+  @Bean
   public BookService bookService(BookRepository bookRepository,
-      AuthorServiceJpaImpl authorService) {
-    return new BookService(bookRepository, authorService);
+      AuthorServiceJpaImpl authorService, MockService mockService) {
+    return new BookService(bookRepository, authorService, mockService);
   }
 
   @Bean

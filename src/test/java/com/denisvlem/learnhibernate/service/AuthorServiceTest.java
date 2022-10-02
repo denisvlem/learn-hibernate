@@ -16,7 +16,6 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 @Slf4j
 class AuthorServiceTest extends BasicMsTest {
 
-
   @Test
   void testOptimisticLock_SwitchVersion() {
     //given
@@ -121,8 +120,12 @@ class AuthorServiceTest extends BasicMsTest {
     var updatedAuthor = authorService.createNew(persistedAuthor);
 
     //then
-    assertThat(authorRepository.findAll()).asList().hasSize(1);
-    assertThat(bookRepository.findAll()).asList().hasSize(2);
+    tx.executeWithoutResult(s -> {
+      var allAuthors = authorRepository.findAll();
+      assertThat(allAuthors).asList().hasSize(1);
+      assertThat(allAuthors.get(0)).isEqualTo(updatedAuthor);
+      assertThat(bookRepository.findAll()).asList().hasSize(2);
+    });
   }
 
   @Test
