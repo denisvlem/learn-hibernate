@@ -6,6 +6,7 @@ import com.denisvlem.learnhibernate.service.AuthorServiceJpaImpl;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +46,7 @@ public abstract class BasicMsTest {
    */
   @BeforeEach
   public void setUp() {
+    Assertions.setMaxStackTraceElementsDisplayed(1000);
     RestAssured.port = port;
     RestAssured.requestSpecification = new RequestSpecBuilder()
         .setPort(port)

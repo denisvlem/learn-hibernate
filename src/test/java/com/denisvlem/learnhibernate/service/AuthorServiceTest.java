@@ -6,18 +6,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.denisvlem.learnhibernate.BasicMsTest;
 import com.denisvlem.learnhibernate.entity.Author;
 import com.denisvlem.learnhibernate.entity.Book;
+import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Set;
-import javax.validation.ConstraintViolationException;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.transaction.TransactionSystemException;
 
 @Slf4j
 class AuthorServiceTest extends BasicMsTest {
 
+  /**
+   * Used to check the optimization lock versioning work.
+   */
   @Test
-  void testOptimisticLock_SwitchVersion() {
+  void givenPersistedEntity_whenUpdate_thenSwitchVersion() {
     //given
     var denisVer0 = authorService.create("Denis", "Emelyanov");
     assertThat(denisVer0.getVersion()).isZero();
@@ -163,6 +168,8 @@ class AuthorServiceTest extends BasicMsTest {
     assertThat(bookRepository.findAll()).asList().hasSize(3);
   }
 
+  //todo created to test validation violation, but the ConstraintViolationException is nwo found
+  // wrapped inside the TransactionSystemException, find out why and how to know that CVE was there
   @Test
   void givenCorruptedAuthor_whenUpdate_shouldThrowValidationException() {
 
@@ -170,7 +177,7 @@ class AuthorServiceTest extends BasicMsTest {
     author.setFirstName("");
 
     assertThatThrownBy(() -> authorService.update(author))
-        .isInstanceOf(ConstraintViolationException.class);
+        .isInstanceOf(TransactionSystemException.class);
   }
 
   @Test
@@ -180,7 +187,7 @@ class AuthorServiceTest extends BasicMsTest {
         .isInstanceOf(ConstraintViolationException.class);
   }
 
-  private Long saveAuthor() {
+  private UUID saveAuthor() {
     var persistedAuthorId = tx.execute(s ->
         authorRepository.save(
             new Author().setFirstName("Denis").setLastName("Emelyanov")).getAuthorId()

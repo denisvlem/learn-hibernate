@@ -1,20 +1,21 @@
 package com.denisvlem.learnhibernate.service;
 
 import com.denisvlem.learnhibernate.entity.Author;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Service for business rules for author.
+ * An author business rules service interface.
  */
 @Validated
 public interface AuthorService {
 
-  Author getById(long id);
+  Author getById(UUID id);
 
   Author create(String firstName, String lastName);
 
   Author update(Author author);
 
-  void delete(@NotNull Long authorId);
+  void delete(@NotNull UUID authorId);
 }

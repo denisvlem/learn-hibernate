@@ -1,5 +1,6 @@
 package com.denisvlem.learnhibernate.dto;
 
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,5 @@ public class AddBookRequestDto {
 
   private String title;
   private int genre;
-  private Long authorId;
+  private UUID authorId;
 }

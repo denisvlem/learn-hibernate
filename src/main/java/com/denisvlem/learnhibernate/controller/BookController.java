@@ -20,8 +20,15 @@ public class BookController {
 
   private final BookService service;
 
+  /**
+   * Add a new book.
+   *
+   * @param requestDto - new book information
+   */
   @PostMapping
   public void doPostAddBook(@RequestBody AddBookRequestDto requestDto) {
+    log.info("Received [POST] /book request");
     service.addBook(requestDto);
+    log.info("Successful[POST] /book request");
   }
 }

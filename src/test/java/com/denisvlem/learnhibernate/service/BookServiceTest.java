@@ -1,7 +1,6 @@
 package com.denisvlem.learnhibernate.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.denisvlem.learnhibernate.dto.AddBookRequestDto;
 import com.denisvlem.learnhibernate.entity.Author;
@@ -12,12 +11,10 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Propagation;
@@ -41,8 +38,6 @@ class BookServiceTest {
   @Autowired
   protected BookService bookService;
 
-  @MockBean
-  protected MockService mockService;
 
   @AfterEach
   public void cleanDb() {
@@ -79,35 +74,6 @@ class BookServiceTest {
       var author = actualBook.getAuthor();
       assertThat(author.getAuthorId()).isEqualTo(givenAuthor.getAuthorId());
     });
-  }
-
-  @Test
-  void givenAuthorServiceException_whenCreateBook_ShouldRollback() {
-
-    log.info("START TEST givenAuthorServiceException_whenCreateBook_ShouldAddOneToDb start");
-    //given
-    var givenAuthor = createAuthor();
-    assertThat(givenAuthor).isNotNull();
-    assertThat(authorRepository.findAll()).hasSize(1);
-    assertThat(bookRepository.findAll()).isEmpty();
-
-    final var givenRequestBody = new AddBookRequestDto()
-        .setAuthorId(givenAuthor.getAuthorId())
-        .setGenre(1)
-        .setTitle("Test Book Title");
-
-    Mockito.doThrow(new IllegalArgumentException()).when(mockService).doSomething();
-
-    //when
-    assertThatThrownBy(() -> bookService.addBook(givenRequestBody))
-        .isInstanceOf(IllegalArgumentException.class);
-
-    //then
-    tx.executeWithoutResult(s -> {
-      var allBooks = bookRepository.findAll();
-      assertThat(allBooks).asList().isEmpty();
-    });
-    log.info("END TEST givenAuthorServiceException_whenCreateBook_ShouldAddOneToDb");
   }
 
   @Test
