@@ -16,12 +16,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 
@@ -34,8 +31,6 @@ import org.hibernate.Hibernate;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
-@RequiredArgsConstructor
 @Accessors(chain = true)
 public class Genre {
 
@@ -47,8 +42,6 @@ public class Genre {
   @Column(name = "name")
   private String name;
 
-  @EqualsAndHashCode.Exclude
-  @ToString.Exclude
   @JoinTable(
       name = "genre_book",
       joinColumns = @JoinColumn(name = "genre_id"),
