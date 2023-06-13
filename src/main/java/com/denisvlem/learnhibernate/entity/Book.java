@@ -1,22 +1,25 @@
 package com.denisvlem.learnhibernate.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PositiveOrZero;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.ToString.Exclude;
 import lombok.experimental.Accessors;
 import org.hibernate.Hibernate;
 
@@ -42,13 +45,36 @@ public class Book {
   @NotBlank
   private String title;
 
-  @ManyToOne
-  @JoinColumn(name = "author_id")
-  private Author author;
+  @Column(name = "description")
+  private String description;
 
-  @Column(name = "genre")
-  @PositiveOrZero
-  private Integer genre;
+  @ManyToMany(
+      mappedBy = "books",
+      fetch = FetchType.LAZY,
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+  )
+  @Exclude
+  private Set<Author> authors = new HashSet<>();
+
+
+  @ManyToMany(
+      mappedBy = "books",
+      fetch = FetchType.LAZY,
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+  )
+  @Exclude
+  private Set<Genre> genres = new HashSet<>();
+
+
+  public void addAuthor(Author author) {
+    this.authors.add(author);
+    author.addBook(this);
+  }
+
+  public void addGenre(Genre genre) {
+    this.genres.add(genre);
+    genre.addBook(this);
+  }
 
   @Override
   public boolean equals(Object o) {

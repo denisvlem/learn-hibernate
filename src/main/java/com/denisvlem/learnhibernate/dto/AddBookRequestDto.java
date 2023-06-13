@@ -1,5 +1,8 @@
 package com.denisvlem.learnhibernate.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +18,14 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class AddBookRequestDto {
 
+  @NotNull
   private String title;
-  private int genre;
-  private UUID authorId;
+
+  private String description;
+
+  @NotEmpty
+  private Set<UUID> authorIds;
+
+  @NotEmpty
+  private Set<UUID> genreIds;
 }

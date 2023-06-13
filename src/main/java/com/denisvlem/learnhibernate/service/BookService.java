@@ -5,6 +5,7 @@ import com.denisvlem.learnhibernate.entity.Book;
 import com.denisvlem.learnhibernate.repository.BookRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ public class BookService {
 
   private final BookRepository bookRepository;
   private final AuthorService authorService;
+  private final GenreService genreService;
 
   /**
    * Add book to the db.
@@ -29,13 +31,17 @@ public class BookService {
    * @return newly created book entity
    */
   @Transactional
-  public Book addBook(AddBookRequestDto requestDto) {
-    var author = authorService.getById(requestDto.getAuthorId());
+  public Book addBook(@Valid AddBookRequestDto requestDto) {
 
-    var book = new Book()
-        .setTitle(requestDto.getTitle())
-        .setGenre(requestDto.getGenre())
-        .setAuthor(author);
+    var book = new Book().setTitle(requestDto.getTitle())
+        .setDescription(requestDto.getDescription());
+
+    var requestGenreIds = requestDto.getGenreIds();
+
+    requestGenreIds.forEach(genreId -> book.addGenre(genreService.getGenre(genreId)));
+
+    requestDto.getAuthorIds().forEach(
+        authorId -> book.addAuthor(authorService.getById(authorId)));
 
     return bookRepository.save(book);
   }
@@ -43,5 +49,10 @@ public class BookService {
   @Transactional
   public void delete(@Valid @NotNull UUID bookId) {
     bookRepository.deleteById(bookId);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Book> getBooks() {
+    return bookRepository.findAll();
   }
 }

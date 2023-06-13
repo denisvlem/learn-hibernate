@@ -2,49 +2,24 @@ package com.denisvlem.learnhibernate.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.denisvlem.learnhibernate.BasicJpaTest;
 import com.denisvlem.learnhibernate.dto.AddBookRequestDto;
 import com.denisvlem.learnhibernate.entity.Author;
 import com.denisvlem.learnhibernate.entity.Book;
-import com.denisvlem.learnhibernate.repository.AuthorRepository;
-import com.denisvlem.learnhibernate.repository.BookRepository;
 import java.util.List;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
-@ContextConfiguration(classes = {ServiceTestConfiguration.class})
-@ActiveProfiles("test")
-@Transactional(propagation = Propagation.NEVER)
+
 @Slf4j
-class BookServiceTest {
+@ContextConfiguration(classes = {ServiceTestConfiguration.class})
+class BookServiceTest extends BasicJpaTest {
 
-  @Autowired
-  protected TransactionTemplate tx;
-  @Autowired
-  protected AuthorRepository authorRepository;
-  @Autowired
-  protected BookRepository bookRepository;
   @Autowired
   protected BookService bookService;
-
-
-  @AfterEach
-  public void cleanDb() {
-    bookRepository.deleteAll();
-    authorRepository.deleteAll();
-  }
-
 
   @Test
   void givenAuthor_whenCreateBook_ShouldAddOneToDb() {
@@ -54,9 +29,9 @@ class BookServiceTest {
     assertThat(givenAuthor).isNotNull();
 
     var givenRequestBody = new AddBookRequestDto()
-        .setAuthorId(givenAuthor.getAuthorId())
-        .setGenre(1)
-        .setTitle("Test Book Title");
+        .setTitle("Test Book Title")
+        .setAuthorIds(Set.of())
+        .setGenreIds(Set.of());
 
     //when
     var expectedBook = bookService.addBook(givenRequestBody);
@@ -70,9 +45,7 @@ class BookServiceTest {
       var actualBook = allBooks.get(0);
       assertThat(actualBook.getBookId()).isEqualTo(expectedBook.getBookId());
       assertThat(actualBook.getTitle()).isEqualTo(expectedBook.getTitle());
-
-      var author = actualBook.getAuthor();
-      assertThat(author.getAuthorId()).isEqualTo(givenAuthor.getAuthorId());
+      assertThat(genreRepository.findAll()).isEmpty();
     });
   }
 
@@ -84,19 +57,19 @@ class BookServiceTest {
     assertThat(authorRepository.findAll()).asList().isNotEmpty();
 
     var givenRequestBody = new AddBookRequestDto()
-        .setAuthorId(givenAuthor.getAuthorId())
-        .setGenre(1)
-        .setTitle("Test Book Title");
+        .setTitle("Test Book Title")
+        .setGenreIds(Set.of())
+        .setAuthorIds(Set.of());
 
     var persistedBook = bookService.addBook(givenRequestBody);
 
     //when
-
     bookService.delete(persistedBook.getBookId());
-
 
     //then
     assertThat(bookRepository.findAll()).asList().isEmpty();
+    var all = genreRepository.findAll();
+    assertThat(all).isEmpty();
   }
 
   private Author createAuthor() {

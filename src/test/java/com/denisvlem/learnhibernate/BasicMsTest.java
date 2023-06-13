@@ -2,6 +2,7 @@ package com.denisvlem.learnhibernate;
 
 import com.denisvlem.learnhibernate.repository.AuthorRepository;
 import com.denisvlem.learnhibernate.repository.BookRepository;
+import com.denisvlem.learnhibernate.repository.GenreRepository;
 import com.denisvlem.learnhibernate.service.AuthorServiceJpaImpl;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -39,6 +40,9 @@ public abstract class BasicMsTest {
   protected BookRepository bookRepository;
 
   @Autowired
+  protected GenreRepository genreRepository;
+
+  @Autowired
   protected TransactionTemplate tx;
 
   /**
@@ -55,9 +59,15 @@ public abstract class BasicMsTest {
         .build();
   }
 
+  /**
+   * Clean up all the db.
+   */
   @AfterEach
-  public void cleanUp() {
-    tx.executeWithoutResult(s -> bookRepository.deleteAll());
-    tx.executeWithoutResult(s -> authorRepository.deleteAll());
+  public final void cleanUp() {
+    tx.executeWithoutResult(s -> {
+      bookRepository.deleteAll();
+      authorRepository.deleteAll();
+      genreRepository.deleteAll();
+    });
   }
 }
