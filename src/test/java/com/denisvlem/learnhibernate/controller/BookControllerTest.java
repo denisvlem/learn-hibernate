@@ -19,10 +19,10 @@ class BookControllerTest extends BasicMsTest {
 
     //given
     var authorId = tx.execute(s -> authorRepository
-        .save(new Author().setFirstName("Denis").setLastName("Emelyanov"))
+        .save(new Author().setFirstName("Irvin").setLastName("Yalom"))
         .getAuthorId());
 
-    var genreId = tx.execute(s -> genreRepository.save(new Genre().setName("testGenre"))
+    var genreId = tx.execute(s -> genreRepository.save(new Genre().setName("Psychotherapy novel"))
         .getId());
     assertThat(bookRepository.findAll()).asList().isEmpty();
 
@@ -31,7 +31,7 @@ class BookControllerTest extends BasicMsTest {
 
     //when
     RestAssured.given()
-        .body(new AddBookRequestDto("author", "description", Set.of(authorId), Set.of(genreId)))
+        .body(new AddBookRequestDto("When Nietzsche Wept", "testDescription", Set.of(authorId), Set.of(genreId)))
         .when().post("/api/v1/book-service/book").then().statusCode(200);
 
     //then
@@ -44,5 +44,6 @@ class BookControllerTest extends BasicMsTest {
     });
 
     assertThat(genreRepository.findAll()).hasSize(1);
+    assertThat(authorRepository.findAll()).hasSize(1);
   }
 }

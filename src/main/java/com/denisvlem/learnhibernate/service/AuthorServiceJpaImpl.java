@@ -2,6 +2,7 @@ package com.denisvlem.learnhibernate.service;
 
 import com.denisvlem.learnhibernate.entity.Author;
 import com.denisvlem.learnhibernate.repository.AuthorRepository;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,19 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthorServiceJpaImpl implements AuthorService {
 
   private final AuthorRepository authorRepository;
-
-  @Transactional
-  public Author createNew(Author author) {
-    return authorRepository.save(author);
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public Author getById(UUID id) {
-
-    log.debug("Author service getById() start");
-    return authorRepository.getReferenceById(id);
-  }
 
   @Override
   @Transactional
@@ -52,6 +40,12 @@ public class AuthorServiceJpaImpl implements AuthorService {
     log.debug("Author with id = [{}] is being deleted", authorId);
     authorRepository.deleteById(authorId);
     log.debug("Author with id = [{}] has been deleted", authorId);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Set<Author> getAuthors(Set<UUID> authorsId) {
+    return authorRepository.findAllByAuthorIdIn(authorsId);
   }
 
 }

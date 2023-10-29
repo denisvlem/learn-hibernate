@@ -2,6 +2,7 @@ package com.denisvlem.learnhibernate.service;
 
 import com.denisvlem.learnhibernate.entity.Genre;
 import com.denisvlem.learnhibernate.repository.GenreRepository;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,8 +18,7 @@ public class GenreService {
   private final GenreRepository genreRepository;
 
   @Transactional(readOnly = true)
-  public Genre getGenre(UUID genreId) {
-
-    return genreRepository.getReferenceById(genreId);
+  public Set<Genre> getGenres(Set<UUID> genreIds) {
+    return genreRepository.findAllByIdIn(genreIds);
   }
 }

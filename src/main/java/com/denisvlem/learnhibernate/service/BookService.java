@@ -36,12 +36,8 @@ public class BookService {
     var book = new Book().setTitle(requestDto.getTitle())
         .setDescription(requestDto.getDescription());
 
-    var requestGenreIds = requestDto.getGenreIds();
-
-    requestGenreIds.forEach(genreId -> book.addGenre(genreService.getGenre(genreId)));
-
-    requestDto.getAuthorIds().forEach(
-        authorId -> book.addAuthor(authorService.getById(authorId)));
+    book.addGenres(genreService.getGenres(requestDto.getGenreIds()));
+    book.addAuthors(authorService.getAuthors(requestDto.getAuthorIds()));
 
     return bookRepository.save(book);
   }

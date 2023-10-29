@@ -66,14 +66,14 @@ public class Book {
   private Set<Genre> genres = new HashSet<>();
 
 
-  public void addAuthor(Author author) {
-    this.authors.add(author);
-    author.addBook(this);
+  public void addAuthors(Set<Author> authors) {
+    this.authors.addAll(authors);
+    authors.forEach(author -> author.addBook(this));
   }
 
-  public void addGenre(Genre genre) {
-    this.genres.add(genre);
-    genre.addBook(this);
+  public void addGenres(Set<Genre> genres) {
+    this.genres.addAll(genres);
+    genres.forEach(genre -> genre.addBook(this));
   }
 
   @Override
